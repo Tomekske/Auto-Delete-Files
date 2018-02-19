@@ -1,1 +1,1 @@
-C:\Python35\python.exe D:\Tomek\Scripts\Delete-files\Auto-Delete.py
+python D:\Programs\Developing\Auto-Delete-Files\Auto-Delete.py

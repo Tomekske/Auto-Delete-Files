@@ -1,7 +1,7 @@
 #=======================================================================#
 #Title				:Auto-Delete										#
 #Description		:This is a small script where unnecessary			#
-#					files and folders are getting deleted				# 
+#					files and folders are getting deleted				#
 #					within a certain folder.							#
 # 					All deleted filenames being saved in a file.		#
 #					So it's easy to get track of deleted files.			#
@@ -15,7 +15,7 @@
 import glob			#import glob module
 import os			#import os module
 import pathlib		#import filesystem module
-import ConfigParser
+import configparser
 import re
 import logging
 import shutil
@@ -32,13 +32,13 @@ def getFilesNames(root, folders, extensions):
 		#Check if folder have to be delted
 		if folders == 'yes':
 			if os.path.isdir(name):
-				writeToFile('[{0}] - [{1}]'.format(root, name)) #write foldername to log file
+				writeToFile('INFO','[{0}] - [{1}]'.format(root, name)) #write foldername to log file
 				print('[{0}] - [{1}]'.format(root, name))
 				shutil.rmtree(name) #remove folder
 		#Loop over every extension
 		for extension in extensions:
 			if name.endswith(extension): #check for that specific extension
-				writeToFile('[{0}] - [{1}]'.format(root, name)) #write filename to log file
+				writeToFile('INFO','[{0}] - [{1}]'.format(root, name)) #write filename to log file
 				print('[{0}] - [{1}]'.format(root, name))
 				os.unlink(name) #remove filename
 
@@ -64,17 +64,23 @@ def formatRootFolder(raw):
 
 ##
 ## @brief      Write log messege to a file
+## @param      err   error code
 ## @param      msg   The message you want to write
 ## @return     None
 ##
-def writeToFile(msg):
+def writeToFile(err,msg):
 	save = config['save']['location'] #get loction where log file is saved
 	logging.basicConfig(filename=save,format='[%(levelname)s]%(asctime)s - %(message)s', datefmt='[%d/%m/%Y][%H:%M:%S]',level=logging.DEBUG) #config logfile
-	logging.info(msg)
+
+	if err == 'INFO':
+		logging.info(msg)
+	elif err == 'WARNING':
+		logging.warning(msg)
+
 
 #Configure config parser
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('D:\Programs\Finished\Auto-Delete-Files\config.ini')
 
 #Check if section exsist in config file
 check_section_rootfolder = config.has_section('rootfolder')
@@ -83,6 +89,7 @@ check_section_fileExtensions = config.has_section('file_extensions')
 #section don't exsist and exit program
 if not (check_section_rootfolder and check_section_fileExtensions):
 	print("Config file doesn't exsist")
+	writeToFile('WARNING', "Config file doesn't exsist")
 	exit()
 #delete folders and files
 else:
