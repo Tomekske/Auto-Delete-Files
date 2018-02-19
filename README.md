@@ -10,4 +10,4 @@
 ### Install modules ###
 	pip install configparser
 # Dowload project #
-	git clone https://github.com/Tomekske/Delete-files
+	git clone https://github.com/Tomekske/Auto-Delete-Files
