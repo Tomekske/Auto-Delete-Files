@@ -83,7 +83,7 @@ def formatRootFolder(raw):
 ##
 def writeToFile(err,msg):
 	save = config['save']['location'] #get loction where log file is saved
-	save = save + 'log_file.log'
+	save = save + '\log_file.log'
 	logging.basicConfig(filename=save,format='[%(levelname)s]%(asctime)s - %(message)s', datefmt='[%d/%m/%Y][%H:%M:%S]',level=logging.DEBUG) #config logfile
 
 	if err == 'INFO':
