@@ -3,14 +3,16 @@
 #Description		:This is a small script where unnecessary			#
 #					files and folders are getting deleted				#
 #					within a certain folder.							#
-# 					All deleted filenames being saved in a file.		#
+#					All deleted filenames being saved in a file.		#
 #					So it's easy to get track of deleted files.			#
 #Author				:joostenstomek@gmail.com							#
-#Date				:19/02/2016											#
-#Version			:1.2												#
+#Date				:15/04/2016											#
+#Version			:1.3												#
 #Usage				:Python												#
 #Python version		:3.5												#
 #=======================================================================#
+
+
 
 import glob			#import glob module
 import os			#import os module
@@ -19,6 +21,8 @@ import configparser
 import re
 import logging
 import shutil
+
+
 
 ##
 ## @brief      Get filenames in directory 
@@ -32,15 +36,20 @@ def getFilesNames(root, folders, extensions):
 		#Check if folder have to be delted
 		if folders == 'yes':
 			if os.path.isdir(name):
-				writeToFile('INFO','[{0}] - [{1}]'.format(root, name)) #write foldername to log file
-				print('[{0}] - [{1}]'.format(root, name))
+				folders = '[{0}][FOLDER] - [{1}]'.format(root, name)
+				writeToFile('INFO',folders) #write foldername to log file
+				print(folders)
 				shutil.rmtree(name) #remove folder
+
 		#Loop over every extension
 		for extension in extensions:
 			if name.endswith(extension): #check for that specific extension
-				writeToFile('INFO','[{0}] - [{1}]'.format(root, name)) #write filename to log file
-				print('[{0}] - [{1}]'.format(root, name))
+				files = '[{0}][FILE] - [{1}]'.format(root, name)
+				writeToFile('INFO',files) #write filename to log file
+				print(files)
 				os.unlink(name) #remove filename
+
+
 
 ##
 ## @brief      Obtain and format extensions from file
@@ -54,6 +63,8 @@ def formatExtension(raw):
 		formated[i] = ".{0}".format(extension) 
 	return formated
 
+
+
 ## @brief      Obtain and format extensions from file
 ## @param      raw   The raw string containing all the extensions
 ## @return     List of extensions
@@ -61,6 +72,8 @@ def formatExtension(raw):
 def formatRootFolder(raw):
 	formated = re.split(r'[,\s]+|,', raw) #split on ',' and space
 	return formated
+
+
 
 ##
 ## @brief      Write log messege to a file
@@ -70,6 +83,7 @@ def formatRootFolder(raw):
 ##
 def writeToFile(err,msg):
 	save = config['save']['location'] #get loction where log file is saved
+	save = save + 'log_file.log'
 	logging.basicConfig(filename=save,format='[%(levelname)s]%(asctime)s - %(message)s', datefmt='[%d/%m/%Y][%H:%M:%S]',level=logging.DEBUG) #config logfile
 
 	if err == 'INFO':
@@ -78,9 +92,10 @@ def writeToFile(err,msg):
 		logging.warning(msg)
 
 
+
 #Configure config parser
 config = configparser.ConfigParser()
-config.read('D:\Programs\Finished\Auto-Delete-Files\config.ini')
+config.read('config.ini')
 
 #Check if section exsist in config file
 check_section_rootfolder = config.has_section('rootfolder')
@@ -94,9 +109,7 @@ if not (check_section_rootfolder and check_section_fileExtensions):
 #delete folders and files
 else:
 	root = config['rootfolder']['rootpath']
-	print(root)
 	root = formatRootFolder(root)
-	print(root)
 	extensions = config['file_extensions']['extensions']
 	folders = config['rootfolder']['folders']
 	extensions = formatExtension(extensions)
